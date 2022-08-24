@@ -24,4 +24,4 @@ export const homeRoutes = [
     exact: false,
     children: <Page404 />
   }
-]
+];
