@@ -7,20 +7,24 @@ import {
 } from "@chakra-ui/react";
 import { memo, useCallback, useEffect, VFC } from "react";
 
+import { UserDetailModal } from "../organisms/user/UserDetailModal";
 import { UserCard } from "../organisms/user/UserCard";
 import { useAllUsers } from "../../hooks/useAllUsers";
-import { UserDetailModal } from "../organisms/user/UserDetailModal";
+import { useSelectUser } from "../../hooks/useSelectUser";
 
 export const UserManagement: VFC = memo(() => {
   const { getUsers, users, loading } = useAllUsers();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { onSelectUser, selectedUser } = useSelectUser();
 
-  useEffect(() => getUsers(), []);
+  useEffect(() => getUsers(), [getUsers]);
 
-  const onClickUser = useCallback((id: number) => {
-    console.log(id);
-    onOpen();
-  }, []);
+  const onClickUser = useCallback(
+    (id: number) => {
+      onSelectUser({ id, users, onOpen });
+    },
+    [users, onSelectUser, onOpen]
+  );
 
   return (
     <>
@@ -44,7 +48,12 @@ export const UserManagement: VFC = memo(() => {
         </Wrap>
       )}
       {users.map((user) => (
-        <UserDetailModal key={user.id} isOpen={isOpen} onClose={onClose} />
+        <UserDetailModal
+          user={selectedUser}
+          key={user.id}
+          isOpen={isOpen}
+          onClose={onClose}
+        />
       ))}
     </>
   );
